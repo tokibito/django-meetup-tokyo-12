@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}商品一覧{% endblock %}
+
+{% block body %}
+<h1>商品一覧</h1>
+{% for item in object_list %}
+<div>{{ item.name }} {{ item.price }}円 <a href="{% url 'add_to_cart' item_id=item.id %}">カートに追加</a></div>
+{% endfor %}
+<h2>カート内の商品</h2>
+{% for cart_item in cart.items %}
+<div>{{ cart_item.name }} {{ cart_item.price }}円</div>
+{% endfor %}
+<a href="{% url 'clear_cart' %}">カートを空にする</a>
+{% endblock %}
