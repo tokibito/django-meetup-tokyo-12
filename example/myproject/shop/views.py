@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from .models import Item
 from .cart import Cart
 
+# カートデータを保持しておくセッションキー
 CART_SESSION_KEY = "cart"
 
 
@@ -23,7 +24,7 @@ class AddToCartView(generic.RedirectView):
         item = Item.objects.get(id=kwargs["item_id"])
         cart = Cart.from_session(request.session, CART_SESSION_KEY)
         cart.add(item)
-        # セッション内のカートオブジェクトを更新
+        # カートのデータをセッションに保存
         cart.save_session(request.session, CART_SESSION_KEY)
         return super().get(request, *args, **kwargs)
 
