@@ -32,5 +32,5 @@ class ClearCartView(generic.RedirectView):
     url = reverse_lazy("item_list")
 
     def get(self, request, *args, **kwargs):
-        request.session.pop(CART_SESSION_KEY)
+        request.session.pop(CART_SESSION_KEY, None)
         return super().get(request, *args, **kwargs)

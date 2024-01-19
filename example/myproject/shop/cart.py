@@ -1,4 +1,4 @@
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, field, asdict
 
 
 @dataclass
@@ -10,11 +10,11 @@ class CartItem:
     price: int
 
 
+@dataclass
 class Cart:
     """ショッピングカートのクラス"""
 
-    def __init__(self):
-        self.items = []
+    items: list[CartItem] = field(default_factory=list)
 
     def add(self, item):
         """商品を追加"""
@@ -25,10 +25,7 @@ class Cart:
         self.items.clear()
 
     def to_data(self):
-        lst = []
-        for cart_item in self.items:
-            lst.append(asdict(cart_item))
-        return lst
+        return asdict(self)["items"]
 
     @classmethod
     def from_data(cls, lst):
