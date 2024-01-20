@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}注文完了{% endblock %}
+
+{% block body %}
+<h1>注文完了</h1>
+<p>
+注文が完了しました。
+</p>
+<a href="{% url 'item_list' %}">商品一覧にもどる</a>
+{% endblock %}

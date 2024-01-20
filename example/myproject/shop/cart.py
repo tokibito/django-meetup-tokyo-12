@@ -8,6 +8,7 @@ class CartItem:
     id: int
     name: str
     price: int
+    code: str
 
 
 @dataclass
@@ -18,7 +19,9 @@ class Cart:
 
     def add(self, item):
         """商品を追加"""
-        cart_item = CartItem(id=item.id, name=item.name, price=item.price)
+        cart_item = CartItem(
+            id=item.id, name=item.name, price=item.price, code=item.code
+        )
         self.items.append(cart_item)
 
     def clear(self):

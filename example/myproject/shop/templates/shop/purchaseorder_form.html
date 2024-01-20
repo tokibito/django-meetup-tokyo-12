@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}注文フォーム{% endblock %}
+
+{% block body %}
+<h1>注文フォーム</h1>
+
+<form method="post">
+<div>
+{{ form.as_p }}
+</div>
+<div>
+  <button type="submit">送信</button>
+</div>
+{% csrf_token %}
+</form>
+
+<h2>カート内の商品</h2>
+{% for cart_item in cart.items %}
+<div>{{ cart_item.name }} {{ cart_item.price }}円</div>
+{% endfor %}
+<a href="{% url 'clear_cart' %}">カートを空にする</a>
+{% endblock %}
+

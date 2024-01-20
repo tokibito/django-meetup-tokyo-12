@@ -4,33 +4,59 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('shop', '0001_initial'),
+        ("shop", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='OrderedItem',
+            name="OrderedItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, verbose_name='品名')),
-                ('price', models.PositiveIntegerField(default=0, verbose_name='価格')),
-                ('code', models.CharField(default='0000', max_length=4, verbose_name='品番')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50, verbose_name="品名")),
+                ("price", models.PositiveIntegerField(default=0, verbose_name="価格")),
+                (
+                    "code",
+                    models.CharField(default="0000", max_length=4, verbose_name="品番"),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='item',
-            name='code',
-            field=models.CharField(default='0000', max_length=4, verbose_name='品番'),
+            model_name="item",
+            name="code",
+            field=models.CharField(default="0000", max_length=4, verbose_name="品番"),
         ),
         migrations.CreateModel(
-            name='PurchaseOrder',
+            name="PurchaseOrder",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('from_name', models.CharField(max_length=50, verbose_name='注文者名')),
-                ('ordered_at', models.DateTimeField(auto_now_add=True, verbose_name='注文日時')),
-                ('ordered_items', models.ManyToManyField(related_name='発注に含まれる商品', to='shop.ordereditem')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("from_name", models.CharField(max_length=50, verbose_name="注文者名")),
+                (
+                    "ordered_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="注文日時"),
+                ),
+                (
+                    "ordered_items",
+                    models.ManyToManyField(
+                        to="shop.ordereditem", verbose_name="発注に含まれる商品"
+                    ),
+                ),
             ],
         ),
     ]
