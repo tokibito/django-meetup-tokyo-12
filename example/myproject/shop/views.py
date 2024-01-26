@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render
 from .models import Item, OrderedItem, PurchaseOrder
 from .cart import Cart
+from . import forms
 
 # カートデータを保持しておくセッションキー
 CART_SESSION_KEY = "cart"
@@ -52,6 +53,7 @@ class ClearCartView(generic.RedirectView):
 class OrderFormView(generic.CreateView):
     model = PurchaseOrder
     fields = ["from_name"]
+    # form_class = forms.OrderForm
     success_url = reverse_lazy("order_complete")
 
     def get_context_data(self, **kwargs):
