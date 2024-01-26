@@ -1,10 +1,21 @@
 from django.views import generic
 from django.urls import reverse_lazy
+from django.shortcuts import render
 from .models import Item, OrderedItem, PurchaseOrder
 from .cart import Cart
 
 # カートデータを保持しておくセッションキー
 CART_SESSION_KEY = "cart"
+
+
+def item_list_view(request):
+    cart = Cart.from_session(request.session, CART_SESSION_KEY)
+    context = {
+        "cart": cart,
+        "object_list": Item.objects.all(),
+    }
+    print(dict(request.session))
+    return render(request, "shop/item_list.html", context)
 
 
 class ItemListView(generic.ListView):
