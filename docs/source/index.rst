@@ -34,7 +34,7 @@ https://github.com/tokibito/django-meetup-tokyo-12/
 資料
 ----
 
-
+https://tokibito.github.io/django-meetup-tokyo-12/
 
 （準備中です）
 
