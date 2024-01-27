@@ -16,12 +16,12 @@ def item_list_view(request):
         "cart": cart,
         "object_list": Item.objects.all(),
     }
-    print(dict(request.session))
     return render(request, "shop/item_list.html", context)
 
 
 class ItemListView(generic.ListView):
     """商品一覧(クラスベースビュー)"""
+
     model = Item
 
     def get_context_data(self, **kwargs):
@@ -34,6 +34,7 @@ class ItemListView(generic.ListView):
 
 class AddToCartView(generic.RedirectView):
     """商品をカートに追加"""
+
     url = reverse_lazy("item_list")
 
     def get(self, request, *args, **kwargs):
@@ -48,6 +49,7 @@ class AddToCartView(generic.RedirectView):
 
 class ClearCartView(generic.RedirectView):
     """カートを空にする"""
+
     url = reverse_lazy("item_list")
 
     def get(self, request, *args, **kwargs):
@@ -58,6 +60,7 @@ class ClearCartView(generic.RedirectView):
 
 class OrderFormView(generic.CreateView):
     """注文フォーム"""
+
     model = PurchaseOrder
     fields = ["from_name"]
     # form_class = forms.OrderForm

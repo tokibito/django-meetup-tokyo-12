@@ -26,14 +26,17 @@ class Cart:
         self.items.append(cart_item)
 
     def clear(self):
+        """カートの中身を空にする"""
         self.items.clear()
 
     def to_data(self):
+        """Cartインスタンスをセッション内に格納する辞書形式に変換する"""
         # Cart.itemsを辞書で変換 list[dict] の形になる
         return asdict(self)["items"]
 
     @classmethod
     def from_data(cls, lst):
+        """セッション内に格納しておいたデータ list[dict] からCartインスタンスを作る"""
         cart = cls()
         for item_data in lst:
             cart_item = CartItem(**item_data)

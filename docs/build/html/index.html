@@ -78,8 +78,8 @@
 </ul>
 </section>
 <section id="id4">
-<h2>サンプルコード<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
-<p>GitHub上にサンプルコードがあります。</p>
+<h2>このハンズオンの完成形のコード<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>GitHub上に完成形のコードがあります。コードを書き進めていて、うまく動かない場合に参考にしてみてください。</p>
 <p><a class="reference external" href="https://github.com/tokibito/django-meetup-tokyo-12/">https://github.com/tokibito/django-meetup-tokyo-12/</a></p>
 </section>
 <section id="id5">
@@ -108,10 +108,17 @@
 </section>
 <section id="id10">
 <h2>プロジェクトの作成とセットアップ<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
+<section id="django">
+<h3>Djangoのプロジェクト作成<a class="headerlink" href="#django" title="Link to this heading">¶</a></h3>
 <p>今回は <code class="docutils literal notranslate"><span class="pre">myproject</span></code> という名前のプロジェクトで作成します。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ django-admin startproject myproject
+(venv)$ cd myproject
 </pre></div>
 </div>
+<p><strong>以降の説明は、このmyprojectディレクトリ以下を起点とします。</strong></p>
+</section>
+<section id="django-debug-toolbar">
+<h3>django-debug-toolbarのセットアップ<a class="headerlink" href="#django-debug-toolbar" title="Link to this heading">¶</a></h3>
 <p>django-debug-toolbarをインストール、セットアップしておきます。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ pip install django-debug-toolbar
 </pre></div>
@@ -123,8 +130,742 @@
 <li><p><a class="reference external" href="https://docs.djangoproject.com/ja/5.0/intro/tutorial08/">はじめてのDjangoアプリ作成、その8 | Django ドキュメント</a></p></li>
 </ul>
 </div>
-<div class="toctree-wrapper compound">
+<p>myproject/settings.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ...</span>
+    <span class="s2">&quot;debug_toolbar&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
 </div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">INTERNAL_IPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MIDDLEWARE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;debug_toolbar.middleware.DebugToolbarMiddleware&quot;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><code class="docutils literal notranslate"><span class="pre">DebugToolbarMiddleware</span></code> は、なるべく外側に配置したほうがよいとドキュメントに書かれています。
+GZipMiddlewareのように、レスポンスボディを加工するミドルウェアを使っている場合は、それよりも後に配置する必要があります。
+DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む処理を行っているためです。</p>
+</div>
+<p>myproject/urls.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">include</span><span class="p">,</span> <span class="n">path</span>  <span class="c1"># includeを追加しています</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ...</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;__debug__/&quot;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s2">&quot;debug_toolbar.urls&quot;</span><span class="p">)),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>これでdjango-debug-toolbarのセットアップまで完了です。初回のDBマイグレーションとrunserverで動作確認してください。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ python manage.py migrate
+(venv)$ python manage.py runserver
+</pre></div>
+</div>
+<p><a class="reference external" href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> をブラウザで開いて確認します。</p>
+</section>
+</section>
+<section id="shop">
+<h2>shopアプリケーションを作成<a class="headerlink" href="#shop" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ python manage.py startapp shop
+</pre></div>
+</div>
+<p>myproject/settings.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ...</span>
+    <span class="s2">&quot;shop&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h2>商品のモデルを作る<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
+<p>shop/models.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+
+<span class="k">class</span> <span class="nc">Item</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;商品&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="s2">&quot;品名&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">price</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="s2">&quot;価格&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="s2">&quot;品番&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;0000&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<section id="id13">
+<h3>マイグレーション<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ python manage.py makemigrations shop
+(venv)$ python manage.py migrate
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id14">
+<h2>商品一覧画面を作る<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h2>
+<p>商品一覧画面を関数ビューで作ってみましょう。</p>
+<p>shop/views.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Item</span>
+
+<span class="k">def</span> <span class="nf">item_list_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;商品一覧(関数ビュー)&quot;&quot;&quot;</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;object_list&quot;</span><span class="p">:</span> <span class="n">Item</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;shop/item_list.html&quot;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>shop/urls.py(新規作成):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">item_list_view</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;item_list&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>myproject/urls.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">include</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;admin/&quot;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s2">&quot;shop.urls&quot;</span><span class="p">)),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;__debug__/&quot;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s2">&quot;debug_toolbar.urls&quot;</span><span class="p">)),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>shop/templates/base.html(新規作成):</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;ja&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>shop/templates/shop/item_list.html(新規作成):</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">extends</span> <span class="s2">&quot;base.html&quot;</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}</span>商品一覧<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>商品一覧<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">item</span> <span class="k">in</span> <span class="nv">object_list</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="cp">{{</span> <span class="nv">item.code</span> <span class="cp">}}</span>:<span class="cp">{{</span> <span class="nv">item.name</span> <span class="cp">}}</span> <span class="cp">{{</span> <span class="nv">item.price</span> <span class="cp">}}</span>円
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>ここまで作成したら、DjangoのadminからItemデータを追加し、 <a class="reference external" href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> にアクセスして動作を確認してください。</p>
+<section id="id15">
+<h3>クラスベースビューに変更する<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">item_list_view</span></code> を関数ビューで作成しましたが、これを同等のクラスベースビューに変更してみましょう。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><a class="reference external" href="https://docs.djangoproject.com/ja/5.0/topics/class-based-views/">クラスベースビュー | Django ドキュメント</a></p>
+</div>
+<p>shop/views.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views</span> <span class="kn">import</span> <span class="n">generic</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Item</span>
+
+<span class="k">class</span> <span class="nc">ItemListView</span><span class="p">(</span><span class="n">generic</span><span class="o">.</span><span class="n">ListView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;商品一覧(クラスベースビュー)&quot;&quot;&quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Item</span>
+</pre></div>
+</div>
+<p>shop/urls.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">ItemListView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;item_list&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>ここまで書き換えたら動作確認します。動作は関数ビューのときと同じになります。</p>
+</section>
+</section>
+<section id="id17">
+<h2>ショッピングカートのクラスを作る<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<p>Pythonの標準モジュールであるdataclassesを使ってショッピングカートのクラスを実装します。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/dataclasses.html">dataclasses - データクラス — Python ドキュメント</a></p>
+</div>
+<p>セッションに格納するデータ構造のイメージは以下の通りです。Pythonの <code class="docutils literal notranslate"><span class="pre">list</span></code> にカート内の商品情報を <code class="docutils literal notranslate"><span class="pre">dict</span></code> で複数格納します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;りんご&quot;</span><span class="p">,</span> <span class="s2">&quot;price&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;0001&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>カート内の商品は <code class="docutils literal notranslate"><span class="pre">CartItem</span></code> クラスで表現し、ショッピングカートは <code class="docutils literal notranslate"><span class="pre">Cart</span></code> クラスで表現します。
+いずれも <code class="docutils literal notranslate"><span class="pre">&#64;dataclass</span></code> デコレータを使用し、 <code class="docutils literal notranslate"><span class="pre">asdict</span></code> 関数を使って辞書に変換できるようにしておきます。</p>
+<p>また、ショッピングカートをDjangoのセッションに格納、セッションから復元するためのメソッドも実装しておきます。</p>
+<p>shop/cart.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">asdict</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">CartItem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;カート内の商品&quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">price</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">code</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Cart</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ショッピングカートのクラス&quot;&quot;&quot;</span>
+
+    <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CartItem</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;商品を追加&quot;&quot;&quot;</span>
+        <span class="c1"># Itemの内容をコピーしてCartItemのインスタンスを生成</span>
+        <span class="n">cart_item</span> <span class="o">=</span> <span class="n">CartItem</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">price</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">code</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cart_item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;カートの中身を空にする&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">to_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cartインスタンスをセッション内に格納する辞書形式に変換する&quot;&quot;&quot;</span>
+        <span class="c1"># Cart.itemsを辞書で変換 list[dict] の形になる</span>
+        <span class="k">return</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lst</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;セッション内に格納しておいたデータ list[dict] からCartインスタンスを作る&quot;&quot;&quot;</span>
+        <span class="n">cart</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">item_data</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+            <span class="n">cart_item</span> <span class="o">=</span> <span class="n">CartItem</span><span class="p">(</span><span class="o">**</span><span class="n">item_data</span><span class="p">)</span>
+            <span class="n">cart</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cart_item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cart</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_session</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">session_data</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;セッションからカートを生成&quot;&quot;&quot;</span>
+        <span class="c1"># Sessionインスタンス(辞書ライクなオブジェクト)からカートデータを取得</span>
+        <span class="n">cart_data</span> <span class="o">=</span> <span class="n">session_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cart_data</span><span class="p">:</span>
+            <span class="c1"># 既存データがあれば Cart.from_data メソッドでCartインスタンスを復元</span>
+            <span class="n">cart</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">cart_data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 無ければ新規</span>
+            <span class="n">cart</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">cart</span>
+
+    <span class="k">def</span> <span class="nf">save_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_data</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;カートをセッションに保存&quot;&quot;&quot;</span>
+        <span class="c1"># Sessionインスタンスにキーを指定してカートのデータ list[dict] を代入</span>
+        <span class="n">session_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_data</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Cart:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>これでショッピングカートを表現するクラスを実装できました。</p>
+<p>Djangoのシェルで動作を見てみましょう。</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="go">(venv)$ python manage.py shell</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">shop.cart</span> <span class="kn">import</span> <span class="n">CartItem</span><span class="p">,</span> <span class="n">Cart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cart</span> <span class="o">=</span> <span class="n">Cart</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cart</span>
+<span class="go">Cart(items=[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">item1</span> <span class="o">=</span> <span class="n">CartItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;りんご&quot;</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="s2">&quot;0001&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">item1</span>
+<span class="go">CartItem(id=1, name=&#39;りんご&#39;, price=100, code=&#39;0001&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cart</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cart</span>
+<span class="go">Cart(items=[CartItem(id=1, name=&#39;りんご&#39;, price=100, code=&#39;0001&#39;)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cart</span><span class="o">.</span><span class="n">to_data</span><span class="p">()</span>  <span class="c1"># このメソッドの出力内容をDjangoのセッションに格納する</span>
+<span class="go">[{&#39;id&#39;: 1, &#39;name&#39;: &#39;りんご&#39;, &#39;price&#39;: 100, &#39;code&#39;: &#39;0001&#39;}]</span>
+
+<span class="go"># Cart.from_data()により、Cartインスタンスを復元する</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cart2</span> <span class="o">=</span> <span class="n">Cart</span><span class="o">.</span><span class="n">from_data</span><span class="p">([{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;りんご&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="s1">&#39;0001&#39;</span><span class="p">}])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cart2</span>
+<span class="go">Cart(items=[CartItem(id=1, name=&#39;りんご&#39;, price=100, code=&#39;0001&#39;)])</span>
+</pre></div>
+</div>
+</section>
+<section id="id18">
+<h2>ショッピングカートに追加するビュー<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h2>
+<p>ショッピングカートに商品を追加するビューを実装します。 <code class="docutils literal notranslate"><span class="pre">/add_to_cart/&lt;Item.id&gt;</span></code> のようなURLで実装します。</p>
+<p>このURLにGETリクエストでアクセスしたあとは、一覧画面にリダイレクトします。</p>
+<p>shop/views.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">reverse_lazy</span>
+<span class="kn">from</span> <span class="nn">.cart</span> <span class="kn">import</span> <span class="n">Cart</span>
+
+<span class="c1"># カートデータを保持しておくセッションキー</span>
+<span class="n">CART_SESSION_KEY</span> <span class="o">=</span> <span class="s2">&quot;cart&quot;</span>
+
+<span class="c1"># ...</span>
+<span class="k">class</span> <span class="nc">AddToCartView</span><span class="p">(</span><span class="n">generic</span><span class="o">.</span><span class="n">RedirectView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;商品をカートに追加&quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="n">reverse_lazy</span><span class="p">(</span><span class="s2">&quot;item_list&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;item_id&quot;</span><span class="p">])</span>
+        <span class="c1"># セッションからカートインスタンスを生成</span>
+        <span class="n">cart</span> <span class="o">=</span> <span class="n">Cart</span><span class="o">.</span><span class="n">from_session</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="n">CART_SESSION_KEY</span><span class="p">)</span>
+        <span class="n">cart</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="c1"># カートのデータをセッションに保存</span>
+        <span class="n">cart</span><span class="o">.</span><span class="n">save_session</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="n">CART_SESSION_KEY</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">cart</span></code> という名前のセッションキーで、Djangoのセッションに値を保存しています。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><strong>django.urlsのreverse, reverse_lazyの使い分け</strong></p>
+<p>reverse関数、reverse_lazy関数の使い分けですが、モジュールを読み込んだときに評価される部分（クラス定義での変数代入）ではreverse_lazy、関数やクラスのメソッド内ではreverseを使うようにします。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="n">reverse_lazy</span><span class="p">(</span><span class="s2">&quot;url_name&quot;</span><span class="p">)</span>  <span class="c1"># ここはモジュールを読み込んだときに関数が実行されるので、遅延評価のreverse_lazyを使う</span>
+
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s2">&quot;url_name&quot;</span><span class="p">)</span>  <span class="c1"># ここはfooメソッド呼び出し時に関数が呼ばれるのでrevserseでよい</span>
+
+<span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s2">&quot;url_name&quot;</span><span class="p">)</span>  <span class="c1"># ここはfoo関数呼び出し時に関数が呼ばれるのでrevserseでよい</span>
+</pre></div>
+</div>
+</div>
+<p>shop/urls.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ...</span>
+    <span class="n">path</span><span class="p">(</span>
+        <span class="s2">&quot;add_to_cart/&lt;int:item_id&gt;&quot;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">AddToCartView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;add_to_cart&quot;</span>
+    <span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>このコードの動作確認はしづらいので、一旦そのまま次に進みましょう。</p>
+</section>
+<section id="id19">
+<h2>カートの中身を表示する<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h2>
+<p>カートの中身を表示できるように、 <code class="docutils literal notranslate"><span class="pre">ItemListView</span></code> を改修します。
+<code class="docutils literal notranslate"><span class="pre">get_context_data</span></code> を追加実装し、セッションからCartインスタンスを生成して、テンプレートにコンテキスト変数で渡します。</p>
+<p>shop/views.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+
+<span class="k">class</span> <span class="nc">ItemListView</span><span class="p">(</span><span class="n">generic</span><span class="o">.</span><span class="n">ListView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;商品一覧(クラスベースビュー)&quot;&quot;&quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Item</span>
+
+    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># セッションからカートインスタンスを生成</span>
+        <span class="n">cart</span> <span class="o">=</span> <span class="n">Cart</span><span class="o">.</span><span class="n">from_session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="n">CART_SESSION_KEY</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;cart&quot;</span><span class="p">:</span> <span class="n">cart</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">context</span>
+
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+<p>テンプレートでは、 <code class="docutils literal notranslate"><span class="pre">cart.items</span></code> から取り出した <code class="docutils literal notranslate"><span class="pre">CartItem</span></code> インスタンスの内容を表示します。</p>
+<p>このテンプレートの改修と一緒に、「カートに追加」のリンクも追加しておきます。</p>
+<p>shop/templates/shop/item_list.html:</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">extends</span> <span class="s2">&quot;base.html&quot;</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}</span>商品一覧<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>商品一覧<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">item</span> <span class="k">in</span> <span class="nv">object_list</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="cp">{{</span> <span class="nv">item.code</span> <span class="cp">}}</span>:<span class="cp">{{</span> <span class="nv">item.name</span> <span class="cp">}}</span> <span class="cp">{{</span> <span class="nv">item.price</span> <span class="cp">}}</span>円
+  <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;</span><span class="cp">{%</span> <span class="k">url</span> <span class="s1">&#39;add_to_cart&#39;</span> <span class="nv">item_id</span><span class="o">=</span><span class="nv">item.id</span> <span class="cp">%}</span><span class="s">&quot;</span><span class="p">&gt;</span>カートに追加<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>カート内の商品<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">cart_item</span> <span class="k">in</span> <span class="nv">cart.items</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="cp">{{</span> <span class="nv">cart_item.code</span> <span class="cp">}}</span>:<span class="cp">{{</span> <span class="nv">cart_item.name</span> <span class="cp">}}</span> <span class="cp">{{</span> <span class="nv">cart_item.price</span> <span class="cp">}}</span>円<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>ここまで書けたら、動作確認してみてください。カートに商品を追加できるようになるはずです。</p>
+<p>セッション内のデータは、DebugToolbarを使うと確認が簡単です。</p>
+<section id="id20">
+<h3>Djangoのセッションについて<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://docs.djangoproject.com/ja/5.0/topics/http/sessions/">セッションの使いかた | Django ドキュメント</a></p>
+<p>Djangoのセッションは、ビューの中で利用できます。</p>
+<p>辞書ライクなオブジェクトなので、キーを指定して値を代入、参照できます。</p>
+<p>関数ビューの場合:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c1"># セッションから my-data-key というキーで格納された値を取り出し</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my-data-key&quot;</span><span class="p">)</span>
+    <span class="c1"># セッションに my-data-key というキーで辞書を格納</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;my-data-key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;foo&quot;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;hoge&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>セッションに格納したデータは、有効期限が切れるまではページ遷移をしても保持されます。</p>
+<p><code class="docutils literal notranslate"><span class="pre">request.session</span></code> に値を代入したり、内容を更新した場合、 <code class="docutils literal notranslate"><span class="pre">SessionMiddleware</span></code> が変更を検知してセッションの内容をデータベース等に保存します。</p>
+<p>Djangoの認証機能のユーザー情報もセッションに格納されます。</p>
+<p>一般的に、HTTPでセッション機能を実現するためには、異なる2つのリクエストが、同一の利用者（ブラウザ）からアクセスしてきたことを識別する必要があります。</p>
+<p>Djangoの場合は、セッションIDを文字列で発行し、Cookieに格納しています。ブラウザから送信されたCookieからセッションIDを取り出し、サーバー側で既存のセッションIDと照合することで、同一性を確認しています。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<ul class="simple">
+<li><p>デフォルトの設定では、Djangoのセッションデータはデータベースに格納されます。 settings.SESSION_ENGINE で保存先を変更できます。</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="id22">
+<h2>カートの中身をすべて消すビュー<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h2>
+<p>カートの中身を削除したい場合は、セッションからカートのデータを削除します。</p>
+<p>セッションからキーを削除すると、キーが無い状態のセッションデータが保持されるため、削除相当の動作になります。</p>
+<p>削除後は商品一覧画面にリダイレクトします。</p>
+<p>shop/views.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ClearCartView</span><span class="p">(</span><span class="n">generic</span><span class="o">.</span><span class="n">RedirectView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;カートを空にする&quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="n">reverse_lazy</span><span class="p">(</span><span class="s2">&quot;item_list&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># セッションのカートデータを削除する</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">CART_SESSION_KEY</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>shop/urls.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ...</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;clear_cart&quot;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">ClearCartView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;clear_cart&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>shop/templates/shop/item_list.html:</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}</span>
+# ...
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;</span><span class="cp">{%</span> <span class="k">url</span> <span class="s1">&#39;clear_cart&#39;</span> <span class="cp">%}</span><span class="s">&quot;</span><span class="p">&gt;</span>カートを空にする<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>ここまで実装したら動作確認しましょう。</p>
+<p>カートに商品を追加する、カートをクリアする、といった機能を持つ基本的なショッピングカートの機能を実装できたことになります。</p>
+</section>
+<section id="id23">
+<h2>発注のモデルを作る<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h2>
+<p>さて、カートに入れた内容を発注する、といった想定で、発注の情報を入力し、データベースに格納する機能を作っていきます。</p>
+<p>要件によりますが、発注後に商品の価格や名称を変更した場合、発注済みのデータも価格が変わってしまうと困る場合が多いと思います。
+今回は、発注処理を行った時点の商品の情報をデータベースに格納するように実装します。</p>
+<p>１つの注文には、商品が複数含まれます。 <code class="docutils literal notranslate"><span class="pre">PurchaseOrder</span></code> クラスで「発注」を表現し、 <code class="docutils literal notranslate"><span class="pre">OrderedItem</span></code> クラスで「発注に含まれる商品データ」を表現します。</p>
+<p>注文のデータには、注文者名と注文日時を保存できるように作ってみます。</p>
+<p>shop/models.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+
+<span class="k">class</span> <span class="nc">OrderedItem</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;発注された商品&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="s2">&quot;品名&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">price</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="s2">&quot;価格&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="s2">&quot;品番&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;0000&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;OrderedItem:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">PurchaseOrder</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;注文&quot;&quot;&quot;</span>
+
+    <span class="n">from_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="s2">&quot;注文者名&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">ordered_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="s2">&quot;注文日時&quot;</span><span class="p">,</span> <span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ordered_items</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">OrderedItem</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;発注に含まれる商品&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;PurchaseOrder:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">from_name</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<section id="id24">
+<h3>マイグレーション<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ python manage.py makemigrations shop
+(venv)$ python manage.py migrate
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id25">
+<h2>発注のフォームを作る<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h2>
+<p>Djangoにはモデルからフォームクラスを生成する機能があります。
+今回はモデルに紐づく内容を入力するフォームなので、ModelFormを使うと簡単にフォームを作れます。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><strong>Djangoのフォーム機能（django.forms）の役割</strong></p>
+<p>Djangoのフォーム機能には、次の機能があります。</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Form</dt><dd><ul>
+<li><p>データの検証</p></li>
+<li><p>Fieldを使ったデータの変換</p></li>
+<li><p>フォーム用のHTMLタグの生成（Field.widget経由）</p></li>
+<li><p>FormはFieldを内包する</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Field</dt><dd><ul>
+<li><p>フィールド単位のデータの検証、変換</p></li>
+<li><p>FieldはWidgetを内包する</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Widget</dt><dd><ul>
+<li><p>Field単位のHTMLタグを生成する機能</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<section id="modelform">
+<h3>ModelFormを使う<a class="headerlink" href="#modelform" title="Link to this heading">¶</a></h3>
+<p>shop/forms.py(新規作成):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">PurchaseOrder</span>
+
+
+<span class="k">class</span> <span class="nc">OrderForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">PurchaseOrder</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;from_name&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>フォームを定義したら、Djangoのシェルで動作を見てみましょう。</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="go">(venv)$ python manage.py shell</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">shop.forms</span> <span class="kn">import</span> <span class="n">OrderForm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">form</span> <span class="o">=</span> <span class="n">OrderForm</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">as_p</span><span class="p">())</span>
+<span class="go">&lt;p&gt;</span>
+<span class="go">    &lt;label for=&quot;id_from_name&quot;&gt;注文者名:&lt;/label&gt;</span>
+<span class="go">    &lt;input type=&quot;text&quot; name=&quot;from_name&quot; maxlength=&quot;50&quot; required id=&quot;id_from_name&quot;&gt;</span>
+
+
+
+
+<span class="go">  &lt;/p&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">form2</span> <span class="o">=</span> <span class="n">OrderForm</span><span class="p">({</span><span class="s2">&quot;from_name&quot;</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span> <span class="o">*</span> <span class="mi">100</span><span class="p">})</span>  <span class="c1"># 50文字制限のところに100文字入れてみる</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">form2</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">form2</span><span class="o">.</span><span class="n">errors</span>
+<span class="go">{&#39;from_name&#39;: [&#39;この値は 50 文字以下でなければなりません( 100 文字になっています)。&#39;]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">form2</span><span class="o">.</span><span class="n">as_p</span><span class="p">())</span>
+<span class="go">&lt;ul class=&quot;errorlist&quot;&gt;&lt;li&gt;この値は 50 文字以下でなければなりません( 100 文字になっています)。&lt;/li&gt;&lt;/ul&gt;</span>
+<span class="go">  &lt;p&gt;</span>
+<span class="go">    &lt;label for=&quot;id_from_name&quot;&gt;注文者名:&lt;/label&gt;</span>
+<span class="go">    &lt;input type=&quot;text&quot; name=&quot;from_name&quot; value=&quot;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&quot; maxlength=&quot;50&quot; required aria-invalid=&quot;true&quot; id=&quot;id_from_name&quot;&gt;</span>
+
+
+
+
+<span class="go">  &lt;/p&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">form3</span> <span class="o">=</span> <span class="n">OrderForm</span><span class="p">({</span><span class="s2">&quot;from_name&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">form3</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>  <span class="c1"># ModelFormの場合、saveメソッドで Model.objects.create() が実行される</span>
+<span class="go">&lt;PurchaseOrder: PurchaseOrder:1:test&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id26">
+<h2>発注のビュー<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h2>
+<p>shop/views.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Item</span><span class="p">,</span> <span class="n">OrderedItem</span><span class="p">,</span> <span class="n">PurchaseOrder</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">forms</span>
+
+<span class="c1"># ...</span>
+
+<span class="k">class</span> <span class="nc">OrderFormView</span><span class="p">(</span><span class="n">generic</span><span class="o">.</span><span class="n">CreateView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;注文フォーム&quot;&quot;&quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">PurchaseOrder</span>
+    <span class="n">form_class</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">OrderForm</span>
+    <span class="n">success_url</span> <span class="o">=</span> <span class="n">reverse_lazy</span><span class="p">(</span><span class="s2">&quot;order_complete&quot;</span><span class="p">)</span>  <span class="c1"># 保存後は完了画面へ</span>
+
+    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">cart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cart</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;cart&quot;</span><span class="p">:</span> <span class="n">cart</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">context</span>
+
+    <span class="k">def</span> <span class="nf">get_cart</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;セッションからカートインスタンスを生成&quot;&quot;&quot;</span>
+        <span class="n">cart</span> <span class="o">=</span> <span class="n">Cart</span><span class="o">.</span><span class="n">from_session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="n">CART_SESSION_KEY</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cart</span>
+
+    <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+        <span class="c1"># フォームの保存(PurchaseOrderの保存)とインスタンスを保持</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="c1"># カートの内容からOrderedItemを作成して保存</span>
+        <span class="n">cart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cart</span><span class="p">()</span>
+        <span class="n">ordered_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cart_item</span> <span class="ow">in</span> <span class="n">cart</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="c1"># カート内のCartItemの内容をコピーしてOrderedItemを作成、保存</span>
+            <span class="n">ordered_item</span> <span class="o">=</span> <span class="n">OrderedItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">cart_item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">price</span><span class="o">=</span><span class="n">cart_item</span><span class="o">.</span><span class="n">price</span><span class="p">,</span>
+                <span class="n">code</span><span class="o">=</span><span class="n">cart_item</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ordered_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ordered_item</span><span class="p">)</span>
+        <span class="c1"># PurchaseOrder.ordered_itemsにOrderedItemを追加</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">ordered_items</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">ordered_items</span><span class="p">)</span>
+        <span class="c1"># セッションのカートデータを削除する</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">CART_SESSION_KEY</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>shop/urls.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ...</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;order_form&quot;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">OrderFormView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;order_form&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>shop/templates/shop/item_list.html:</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}</span>
+# ...
+<span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;</span><span class="cp">{%</span> <span class="k">url</span> <span class="s1">&#39;order_form&#39;</span> <span class="cp">%}</span><span class="s">&quot;</span><span class="p">&gt;</span>注文へ進む<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>shop/templates/shop/purchaseorder_form.html(新規作成):</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">extends</span> <span class="s2">&quot;base.html&quot;</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}</span>注文フォーム<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>注文フォーム<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="cp">{{</span> <span class="nv">form.as_p</span> <span class="cp">}}</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>送信<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">csrf_token</span> <span class="cp">%}</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>カート内の商品<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">cart_item</span> <span class="k">in</span> <span class="nv">cart.items</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="cp">{{</span> <span class="nv">cart_item.name</span> <span class="cp">}}</span> <span class="cp">{{</span> <span class="nv">cart_item.price</span> <span class="cp">}}</span>円<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;</span><span class="cp">{%</span> <span class="k">url</span> <span class="s1">&#39;clear_cart&#39;</span> <span class="cp">%}</span><span class="s">&quot;</span><span class="p">&gt;</span>カートを空にする<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>動作確認の前に、完了画面の実装が必要です。一旦そのまま進めます。</p>
+</section>
+<section id="id27">
+<h2>完了画面<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h2>
+<p>注文フォームの保存が完了したときに表示するための完了画面を用意します。</p>
+<p>shop/views.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+
+<span class="k">class</span> <span class="nc">OrderCompleteView</span><span class="p">(</span><span class="n">generic</span><span class="o">.</span><span class="n">TemplateView</span><span class="p">):</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">&quot;shop/complete.html&quot;</span>
+</pre></div>
+</div>
+<p>shop/urls.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ...</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;order_complete&quot;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">OrderCompleteView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;order_complete&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>shop/templates/shop/complete.html(新規作成):</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">extends</span> <span class="s2">&quot;base.html&quot;</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}</span>注文完了<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>注文完了<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+注文が完了しました。
+<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;</span><span class="cp">{%</span> <span class="k">url</span> <span class="s1">&#39;item_list&#39;</span> <span class="cp">%}</span><span class="s">&quot;</span><span class="p">&gt;</span>商品一覧にもどる<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>ここまで実装できたら動作確認をしてみましょう。</p>
+<p>カートに商品を入れて、注文フォームに進み、フォームを送信して完了画面が表示されたら成功です。</p>
+<section id="id28">
+<h3>クラスベースビューのフォーム生成機能を使う<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h3>
+<p>クラスベースビューのCreateViewには、ModelFormを自動生成する処理が含まれています。</p>
+<p>モデルに対応するフォームを使って保存するだけの場合は、CreateViewのフォーム生成機能を利用すると、フォームクラスの定義を省略できます。</p>
+<p>shop/views.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+
+<span class="k">class</span> <span class="nc">OrderFormView</span><span class="p">(</span><span class="n">generic</span><span class="o">.</span><span class="n">CreateView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;注文フォーム&quot;&quot;&quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">PurchaseOrder</span>
+    <span class="c1"># form_class = forms.OrderForm</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;from_name&quot;</span><span class="p">]</span>  <span class="c1"># form_classの代わりにfieldsを定義する</span>
+    <span class="n">success_url</span> <span class="o">=</span> <span class="n">reverse_lazy</span><span class="p">(</span><span class="s2">&quot;order_complete&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<p>自分で作成したOrderFormと動作は同じです。</p>
+<p>ここまでで、ショッピングカートと注文フォームの実装は完了です。お疲れ様でした。</p>
+</section>
+</section>
+<section id="id29">
+<h2>追加課題<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h2>
+<p>時間に余裕のある人向けの追加課題です。</p>
+<ul class="simple">
+<li><p>カート内の商品を個別に削除できるようにする</p></li>
+<li><p>管理画面のPurchaseOrderの編集フォームで、ordered_itemsを見やすくする（StackedInlineを使ってみる）</p></li>
+<li><p>CartItemとOrderedItemで商品ごとの数量を保持できるように変更し、カートに同一商品を追加する場合は数量だけを増やす形にする</p></li>
+<li><dl class="simple">
+<dt>カートに商品を追加する処理をPOSTメソッドに変更する</dt><dd><ul>
+<li><p>GETメソッドだと、外部サイトに貼られたリンクを踏むだけでも商品をカートに入れることができてしまいます。POSTメソッドにしてCSRF対策をしてみましょう。</p></li>
+<li><p>同様にカートの商品を削除する処理もPOSTにしてみるとよいでしょう。</p></li>
+<li><p>formタグをうまく使うと、JavaScript無しでも実装できます。</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>セッションエンジンをキャッシュに変更し、キャッシュバックエンドをRedisにする</p></li>
+</ul>
 </section>
 </section>
 
@@ -142,7 +883,7 @@
 <li><a class="reference internal" href="#id1">イベント概要</a></li>
 <li><a class="reference internal" href="#id2">中級者向けハンズオンについて</a></li>
 <li><a class="reference internal" href="#id3">作業環境の準備</a></li>
-<li><a class="reference internal" href="#id4">サンプルコード</a></li>
+<li><a class="reference internal" href="#id4">このハンズオンの完成形のコード</a></li>
 <li><a class="reference internal" href="#id5">資料</a></li>
 <li><a class="reference internal" href="#id6">作成するアプリケーションについて</a><ul>
 <li><a class="reference internal" href="#id7">商品一覧ページ</a></li>
@@ -150,7 +891,41 @@
 <li><a class="reference internal" href="#id9">注文フォームの機能</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id10">プロジェクトの作成とセットアップ</a></li>
+<li><a class="reference internal" href="#id10">プロジェクトの作成とセットアップ</a><ul>
+<li><a class="reference internal" href="#django">Djangoのプロジェクト作成</a></li>
+<li><a class="reference internal" href="#django-debug-toolbar">django-debug-toolbarのセットアップ</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#shop">shopアプリケーションを作成</a></li>
+<li><a class="reference internal" href="#id12">商品のモデルを作る</a><ul>
+<li><a class="reference internal" href="#id13">マイグレーション</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id14">商品一覧画面を作る</a><ul>
+<li><a class="reference internal" href="#id15">クラスベースビューに変更する</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id17">ショッピングカートのクラスを作る</a></li>
+<li><a class="reference internal" href="#id18">ショッピングカートに追加するビュー</a></li>
+<li><a class="reference internal" href="#id19">カートの中身を表示する</a><ul>
+<li><a class="reference internal" href="#id20">Djangoのセッションについて</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id22">カートの中身をすべて消すビュー</a></li>
+<li><a class="reference internal" href="#id23">発注のモデルを作る</a><ul>
+<li><a class="reference internal" href="#id24">マイグレーション</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id25">発注のフォームを作る</a><ul>
+<li><a class="reference internal" href="#modelform">ModelFormを使う</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id26">発注のビュー</a></li>
+<li><a class="reference internal" href="#id27">完了画面</a><ul>
+<li><a class="reference internal" href="#id28">クラスベースビューのフォーム生成機能を使う</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id29">追加課題</a></li>
 </ul>
 </li>
 </ul>
