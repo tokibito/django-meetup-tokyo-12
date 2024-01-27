@@ -9,7 +9,7 @@ class Item(models.Model):
     code = models.CharField("品番", max_length=4, default="0000")
 
     def __str__(self):
-        return f"{self.pk}:{self.code}:{self.name}"
+        return f"Item:{self.pk}:{self.code}:{self.name}"
 
 
 class OrderedItem(models.Model):
@@ -20,7 +20,7 @@ class OrderedItem(models.Model):
     code = models.CharField("品番", max_length=4, default="0000")
 
     def __str__(self):
-        return f"{self.pk}:{self.code}:{self.name}"
+        return f"OrderedItem:{self.pk}:{self.code}:{self.name}"
 
 
 class PurchaseOrder(models.Model):
@@ -33,4 +33,4 @@ class PurchaseOrder(models.Model):
     )
 
     def __str__(self):
-        return f"{self.pk}:{self.from_name}:{self.ordered_at}"
+        return f"PurchaseOrder:{self.pk}:{self.from_name}"
