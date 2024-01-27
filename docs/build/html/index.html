@@ -86,6 +86,43 @@
 <h2>資料<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
 <p><a class="reference external" href="https://tokibito.github.io/django-meetup-tokyo-12/">https://tokibito.github.io/django-meetup-tokyo-12/</a></p>
 <p>（準備中です）</p>
+</section>
+<section id="id6">
+<h2>作成するアプリケーションについて<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>ECサイトを想定したアプリケーションを作成します。</p>
+<section id="id7">
+<h3>商品一覧ページ<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<p>データベースに登録しておいた商品一覧を表示するページです。</p>
+<p>商品データはDjango adminからデータベースに登録する想定です。</p>
+</section>
+<section id="id8">
+<h3>ショッピングカート<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<p>商品一覧ページで選んだ商品は、ショッピングカートに保持します。</p>
+<p>ショッピングカートの内容は、一覧ページの下部に表示します。</p>
+</section>
+<section id="id9">
+<h3>注文フォームの機能<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<p>注文データを作成するため、必要な情報を入力するフォームです。</p>
+<p>ショッピングカートに入れた商品も表示します。</p>
+</section>
+</section>
+<section id="id10">
+<h2>プロジェクトの作成とセットアップ<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
+<p>今回は <code class="docutils literal notranslate"><span class="pre">myproject</span></code> という名前のプロジェクトで作成します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ django-admin startproject myproject
+</pre></div>
+</div>
+<p>django-debug-toolbarをインストール、セットアップしておきます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ pip install django-debug-toolbar
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://django-debug-toolbar.readthedocs.io/en/latest/">django-debug-toolbar</a></p></li>
+<li><p><a class="reference external" href="https://docs.djangoproject.com/ja/5.0/intro/tutorial08/">はじめてのDjangoアプリ作成、その8 | Django ドキュメント</a></p></li>
+</ul>
+</div>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -107,6 +144,13 @@
 <li><a class="reference internal" href="#id3">作業環境の準備</a></li>
 <li><a class="reference internal" href="#id4">サンプルコード</a></li>
 <li><a class="reference internal" href="#id5">資料</a></li>
+<li><a class="reference internal" href="#id6">作成するアプリケーションについて</a><ul>
+<li><a class="reference internal" href="#id7">商品一覧ページ</a></li>
+<li><a class="reference internal" href="#id8">ショッピングカート</a></li>
+<li><a class="reference internal" href="#id9">注文フォームの機能</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id10">プロジェクトの作成とセットアップ</a></li>
 </ul>
 </li>
 </ul>
