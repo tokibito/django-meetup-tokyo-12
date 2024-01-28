@@ -36,8 +36,6 @@ https://github.com/tokibito/django-meetup-tokyo-12/
 
 https://tokibito.github.io/django-meetup-tokyo-12/
 
-（準備中です）
-
 作成するアプリケーションについて
 --------------------------------
 
