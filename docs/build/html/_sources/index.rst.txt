@@ -77,6 +77,15 @@ Djangoのプロジェクト作成
 
 **以降の説明は、このmyprojectディレクトリ以下を起点とします。**
 
+管理者ユーザーの作成
+~~~~~~~~~~~~~~~~~~~
+
+Django管理サイト用のユーザーを作成しておきます。
+
+.. code-block::
+
+   (venv)$ python manage.py createsuperuser
+
 django-debug-toolbarのセットアップ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -174,6 +183,16 @@ shop/models.py:
 
        def __str__(self):
            return f"Item:{self.pk}:{self.code}:{self.name}"
+
+shop/admin.py:
+
+.. code-block:: python
+
+   from django.contrib import admin
+   from . import models
+
+   admin.site.register(models.Item)
+
 
 マイグレーション
 ~~~~~~~~~~~~~~~
@@ -633,11 +652,11 @@ shop/models.py:
 
    class OrderedItem(models.Model):
        """発注された商品"""
-   
+
        name = models.CharField("品名", max_length=50)
        price = models.PositiveIntegerField("価格", default=0)
        code = models.CharField("品番", max_length=4, default="0000")
-   
+
        def __str__(self):
            return f"OrderedItem:{self.pk}:{self.code}:{self.name}"
 
@@ -653,6 +672,14 @@ shop/models.py:
 
        def __str__(self):
            return f"PurchaseOrder:{self.pk}:{self.from_name}"
+
+shop/admin.py:
+
+.. code-block:: python
+
+   # ...
+   admin.site.register(models.OrderedItem)
+   admin.site.register(models.PurchaseOrder)
 
 マイグレーション
 ~~~~~~~~~~~~~~~

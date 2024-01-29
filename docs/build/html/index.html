@@ -116,6 +116,13 @@
 </div>
 <p><strong>以降の説明は、このmyprojectディレクトリ以下を起点とします。</strong></p>
 </section>
+<section id="id11">
+<h3>管理者ユーザーの作成<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
+<p>Django管理サイト用のユーザーを作成しておきます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ python manage.py createsuperuser
+</pre></div>
+</div>
+</section>
 <section id="django-debug-toolbar">
 <h3>django-debug-toolbarのセットアップ<a class="headerlink" href="#django-debug-toolbar" title="Link to this heading">¶</a></h3>
 <p>django-debug-toolbarをインストール、セットアップしておきます。</p>
@@ -183,8 +190,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </pre></div>
 </div>
 </section>
-<section id="id12">
-<h2>商品のモデルを作る<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
+<section id="id13">
+<h2>商品のモデルを作る<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h2>
 <p>shop/models.py:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
 
@@ -200,16 +207,23 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
 </pre></div>
 </div>
-<section id="id13">
-<h3>マイグレーション<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
+<p>shop/admin.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Item</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id14">
+<h3>マイグレーション<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ python manage.py makemigrations shop
 (venv)$ python manage.py migrate
 </pre></div>
 </div>
 </section>
 </section>
-<section id="id14">
-<h2>商品一覧画面を作る<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h2>
+<section id="id15">
+<h2>商品一覧画面を作る<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h2>
 <p>商品一覧画面を関数ビューで作ってみましょう。</p>
 <p>shop/views.py:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
@@ -271,8 +285,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </pre></div>
 </div>
 <p>ここまで作成したら、DjangoのadminからItemデータを追加し、 <a class="reference external" href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> にアクセスして動作を確認してください。</p>
-<section id="id15">
-<h3>クラスベースビューに変更する<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
+<section id="id16">
+<h3>クラスベースビューに変更する<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">item_list_view</span></code> を関数ビューで作成しましたが、これを同等のクラスベースビューに変更してみましょう。</p>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
@@ -300,8 +314,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 <p>ここまで書き換えたら動作確認します。動作は関数ビューのときと同じになります。</p>
 </section>
 </section>
-<section id="id17">
-<h2>ショッピングカートのクラスを作る<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<section id="id18">
+<h2>ショッピングカートのクラスを作る<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h2>
 <p>Pythonの標準モジュールであるdataclassesを使ってショッピングカートのクラスを実装します。</p>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
@@ -407,8 +421,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </pre></div>
 </div>
 </section>
-<section id="id18">
-<h2>ショッピングカートに追加するビュー<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h2>
+<section id="id19">
+<h2>ショッピングカートに追加するビュー<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h2>
 <p>ショッピングカートに商品を追加するビューを実装します。 <code class="docutils literal notranslate"><span class="pre">/add_to_cart/&lt;Item.id&gt;</span></code> のようなURLで実装します。</p>
 <p>このURLにGETリクエストでアクセスしたあとは、一覧画面にリダイレクトします。</p>
 <p>shop/views.py:</p>
@@ -465,8 +479,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </div>
 <p>このコードの動作確認はしづらいので、一旦そのまま次に進みましょう。</p>
 </section>
-<section id="id19">
-<h2>カートの中身を表示する<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h2>
+<section id="id20">
+<h2>カートの中身を表示する<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h2>
 <p>カートの中身を表示できるように、 <code class="docutils literal notranslate"><span class="pre">ItemListView</span></code> を改修します。
 <code class="docutils literal notranslate"><span class="pre">get_context_data</span></code> を追加実装し、セッションからCartインスタンスを生成して、テンプレートにコンテキスト変数で渡します。</p>
 <p>shop/views.py:</p>
@@ -511,8 +525,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </div>
 <p>ここまで書けたら、動作確認してみてください。カートに商品を追加できるようになるはずです。</p>
 <p>セッション内のデータは、DebugToolbarを使うと確認が簡単です。</p>
-<section id="id20">
-<h3>Djangoのセッションについて<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
+<section id="id21">
+<h3>Djangoのセッションについて<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h3>
 <p><a class="reference external" href="https://docs.djangoproject.com/ja/5.0/topics/http/sessions/">セッションの使いかた | Django ドキュメント</a></p>
 <p>Djangoのセッションは、ビューの中で利用できます。</p>
 <p>辞書ライクなオブジェクトなので、キーを指定して値を代入、参照できます。</p>
@@ -537,8 +551,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </div>
 </section>
 </section>
-<section id="id22">
-<h2>カートの中身をすべて消すビュー<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h2>
+<section id="id23">
+<h2>カートの中身をすべて消すビュー<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h2>
 <p>カートの中身を削除したい場合は、セッションからカートのデータを削除します。</p>
 <p>セッションからキーを削除すると、キーが無い状態のセッションデータが保持されるため、削除相当の動作になります。</p>
 <p>削除後は商品一覧画面にリダイレクトします。</p>
@@ -572,8 +586,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 <p>ここまで実装したら動作確認しましょう。</p>
 <p>カートに商品を追加する、カートをクリアする、といった機能を持つ基本的なショッピングカートの機能を実装できたことになります。</p>
 </section>
-<section id="id23">
-<h2>発注のモデルを作る<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h2>
+<section id="id24">
+<h2>発注のモデルを作る<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h2>
 <p>さて、カートに入れた内容を発注する、といった想定で、発注の情報を入力し、データベースに格納する機能を作っていきます。</p>
 <p>要件によりますが、発注後に商品の価格や名称を変更した場合、発注済みのデータも価格が変わってしまうと困る場合が多いと思います。
 今回は、発注処理を行った時点の商品の情報をデータベースに格納するように実装します。</p>
@@ -606,16 +620,22 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;PurchaseOrder:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">from_name</span><span class="si">}</span><span class="s2">&quot;</span>
 </pre></div>
 </div>
-<section id="id24">
-<h3>マイグレーション<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h3>
+<p>shop/admin.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">OrderedItem</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">PurchaseOrder</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id25">
+<h3>マイグレーション<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv)$ python manage.py makemigrations shop
 (venv)$ python manage.py migrate
 </pre></div>
 </div>
 </section>
 </section>
-<section id="id25">
-<h2>発注のフォームを作る<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h2>
+<section id="id26">
+<h2>発注のフォームを作る<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h2>
 <p>Djangoにはモデルからフォームクラスを生成する機能があります。
 今回はモデルに紐づく内容を入力するフォームなので、ModelFormを使うと簡単にフォームを作れます。</p>
 <div class="admonition note">
@@ -698,8 +718,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </div>
 </section>
 </section>
-<section id="id26">
-<h2>発注のビュー<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h2>
+<section id="id27">
+<h2>発注のビュー<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h2>
 <p>shop/views.py:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Item</span><span class="p">,</span> <span class="n">OrderedItem</span><span class="p">,</span> <span class="n">PurchaseOrder</span>
@@ -790,8 +810,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </div>
 <p>動作確認の前に、完了画面の実装が必要です。一旦そのまま進めます。</p>
 </section>
-<section id="id27">
-<h2>完了画面<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h2>
+<section id="id28">
+<h2>完了画面<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h2>
 <p>注文フォームの保存が完了したときに表示するための完了画面を用意します。</p>
 <p>shop/views.py:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
@@ -825,8 +845,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </div>
 <p>ここまで実装できたら動作確認をしてみましょう。</p>
 <p>カートに商品を入れて、注文フォームに進み、フォームを送信して完了画面が表示されたら成功です。</p>
-<section id="id28">
-<h3>クラスベースビューのフォーム生成機能を使う<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h3>
+<section id="id29">
+<h3>クラスベースビューのフォーム生成機能を使う<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h3>
 <p>クラスベースビューのCreateViewには、ModelFormを自動生成する処理が含まれています。</p>
 <p>モデルに対応するフォームを使って保存するだけの場合は、CreateViewのフォーム生成機能を利用すると、フォームクラスの定義を省略できます。</p>
 <p>shop/views.py:</p>
@@ -847,8 +867,8 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 <p>ここまでで、ショッピングカートと注文フォームの実装は完了です。お疲れ様でした。</p>
 </section>
 </section>
-<section id="id29">
-<h2>追加課題<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h2>
+<section id="id30">
+<h2>追加課題<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h2>
 <p>時間に余裕のある人向けの追加課題です。</p>
 <ul class="simple">
 <li><p>カート内の商品を個別に削除できるようにする</p></li>
@@ -892,39 +912,40 @@ DebugToolbarMiddlewareは、レスポンスのHTMLにscriptタグを差し込む
 </li>
 <li><a class="reference internal" href="#id10">プロジェクトの作成とセットアップ</a><ul>
 <li><a class="reference internal" href="#django">Djangoのプロジェクト作成</a></li>
+<li><a class="reference internal" href="#id11">管理者ユーザーの作成</a></li>
 <li><a class="reference internal" href="#django-debug-toolbar">django-debug-toolbarのセットアップ</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#shop">shopアプリケーションを作成</a></li>
-<li><a class="reference internal" href="#id12">商品のモデルを作る</a><ul>
-<li><a class="reference internal" href="#id13">マイグレーション</a></li>
+<li><a class="reference internal" href="#id13">商品のモデルを作る</a><ul>
+<li><a class="reference internal" href="#id14">マイグレーション</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id14">商品一覧画面を作る</a><ul>
-<li><a class="reference internal" href="#id15">クラスベースビューに変更する</a></li>
+<li><a class="reference internal" href="#id15">商品一覧画面を作る</a><ul>
+<li><a class="reference internal" href="#id16">クラスベースビューに変更する</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id17">ショッピングカートのクラスを作る</a></li>
-<li><a class="reference internal" href="#id18">ショッピングカートに追加するビュー</a></li>
-<li><a class="reference internal" href="#id19">カートの中身を表示する</a><ul>
-<li><a class="reference internal" href="#id20">Djangoのセッションについて</a></li>
+<li><a class="reference internal" href="#id18">ショッピングカートのクラスを作る</a></li>
+<li><a class="reference internal" href="#id19">ショッピングカートに追加するビュー</a></li>
+<li><a class="reference internal" href="#id20">カートの中身を表示する</a><ul>
+<li><a class="reference internal" href="#id21">Djangoのセッションについて</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id22">カートの中身をすべて消すビュー</a></li>
-<li><a class="reference internal" href="#id23">発注のモデルを作る</a><ul>
-<li><a class="reference internal" href="#id24">マイグレーション</a></li>
+<li><a class="reference internal" href="#id23">カートの中身をすべて消すビュー</a></li>
+<li><a class="reference internal" href="#id24">発注のモデルを作る</a><ul>
+<li><a class="reference internal" href="#id25">マイグレーション</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id25">発注のフォームを作る</a><ul>
+<li><a class="reference internal" href="#id26">発注のフォームを作る</a><ul>
 <li><a class="reference internal" href="#modelform">ModelFormを使う</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id26">発注のビュー</a></li>
-<li><a class="reference internal" href="#id27">完了画面</a><ul>
-<li><a class="reference internal" href="#id28">クラスベースビューのフォーム生成機能を使う</a></li>
+<li><a class="reference internal" href="#id27">発注のビュー</a></li>
+<li><a class="reference internal" href="#id28">完了画面</a><ul>
+<li><a class="reference internal" href="#id29">クラスベースビューのフォーム生成機能を使う</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id29">追加課題</a></li>
+<li><a class="reference internal" href="#id30">追加課題</a></li>
 </ul>
 </li>
 </ul>
